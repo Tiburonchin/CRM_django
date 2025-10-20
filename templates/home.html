@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - CRM System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Bienvenido al Sistema CRM</h1>
+        
+        {% if user.is_authenticated %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Hola, <strong>{{ user.get_full_name|default:user.username }}</strong>
+            </div>
+
+            <div class="row mt-4">
+                <!-- Card Clientes -->
+                <div class="col-md-4 mb-3">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people fs-1 text-primary"></i>
+                            <h5 class="card-title mt-3">Clientes</h5>
+                            <p class="card-text">Gestiona tu cartera de clientes</p>
+                            <a href="{% url 'clients:list' %}" class="btn btn-primary">
+                                Ver Clientes <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Actividades -->
+                <div class="col-md-4 mb-3">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calendar-check fs-1 text-success"></i>
+                            <h5 class="card-title mt-3">Actividades</h5>
+                            <p class="card-text">Seguimiento de actividades</p>
+                            <a href="{% url 'activities:list' %}" class="btn btn-success">
+                                Ver Actividades <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card API -->
+                <div class="col-md-4 mb-3">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <i class="bi bi-code-square fs-1 text-info"></i>
+                            <h5 class="card-title mt-3">API REST</h5>
+                            <p class="card-text">Documentación de la API</p>
+                            <a href="/api/" class="btn btn-info" target="_blank">
+                                Explorar API <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3>Panel de Control</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h4 id="total-clients">-</h4>
+                                    <p class="text-muted">Total Clientes</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 id="total-activities">-</h4>
+                                    <p class="text-muted">Total Actividades</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 id="pending-activities">-</h4>
+                                    <p class="text-muted">Actividades Pendientes</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 id="completed-activities">-</h4>
+                                    <p class="text-muted">Actividades Completadas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="jumbotron text-center">
+                <h2>Sistema de Gestión de Relaciones con Clientes</h2>
+                <p class="lead">Gestiona tus clientes y actividades de forma eficiente</p>
+                <hr class="my-4">
+                <p>Por favor, inicia sesión para acceder al sistema</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'users:login' %}" role="button">
+                    Iniciar Sesión
+                </a>
+                <a class="btn btn-secondary btn-lg" href="{% url 'users:signup' %}" role="button">
+                    Registrarse
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if user.is_authenticated %}
+<script>
+    // HU 33: Consumir estadísticas desde la API
+    fetch('/api/activities/statistics/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-activities').textContent = data.total;
+            document.getElementById('pending-activities').textContent = data.by_status.pending;
+            document.getElementById('completed-activities').textContent = data.by_status.completed;
+        })
+        .catch(error => console.error('Error:', error));
+
+    fetch('/api/clients/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-clients').textContent = data.count || data.length;
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+{% endif %}
+{% endblock %}
