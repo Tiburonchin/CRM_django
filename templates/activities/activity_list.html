@@ -2,6 +2,12 @@
 
 {% block title %}Lista de Actividades - CRM System{% endblock %}
 
+{% block extra_css %}
+<!-- Select2 CSS para búsqueda de clientes -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -57,40 +63,40 @@
                             </tr>
                         </thead>
                         <tbody id="activitiesTableBody">
-                            {% for activity in activities %}
                             <tr>
-                                <td>{{ activity.client.name }}</td>
-                                <td>
-                                    <span class="badge bg-primary">{{ activity.get_type_display }}</span>
-                                </td>
-                                <td>
-                                    {% if activity.status == 'pending' %}
-                                        <span class="badge bg-warning">{{ activity.get_status_display }}</span>
-                                    {% elif activity.status == 'completed' %}
-                                        <span class="badge bg-success">{{ activity.get_status_display }}</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">{{ activity.get_status_display }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ activity.date|date:"d/m/Y H:i" }}</td>
-                                <td>{{ activity.notes|truncatewords:10 }}</td>
-                                <td>{{ activity.created_by.username|default:"-" }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" onclick="editActivity({{ activity.pk }})">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteActivity({{ activity.pk }})">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                <td colspan="7" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                    <p class="mt-2">Cargando todas las actividades...</p>
                                 </td>
                             </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" class="text-center">No hay actividades registradas</td>
-                            </tr>
-                            {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Paginación y controles -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <label class="me-2">Mostrar:</label>
+                            <select class="form-select form-select-sm" id="pageSize" style="width: auto;" onchange="changePageSize()">
+                                <option value="10">10 filas</option>
+                                <option value="25">25 filas</option>
+                                <option value="50">50 filas</option>
+                                <option value="100">100 filas</option>
+                                <option value="999999" selected>Todas</option>
+                            </select>
+                            <span class="ms-3 text-muted" id="totalActivities">Total: 0</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <nav aria-label="Paginación de actividades">
+                            <ul class="pagination pagination-sm justify-content-end mb-0" id="paginationControls">
+                                <!-- Se genera dinámicamente -->
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,8 +146,9 @@
                     <div class="mb-3">
                         <label class="form-label">Cliente *</label>
                         <select class="form-select" name="client" id="clientSelect" required>
-                            <option value="">Seleccione un cliente</option>
+                            <option value="">Escribe para buscar un cliente...</option>
                         </select>
+                        <small class="text-muted">Escribe el nombre del cliente para buscar</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tipo *</label>
@@ -198,20 +205,58 @@
     }
 
     const csrftoken = getCookie('csrftoken');
+    
+    // Variables para paginación
+    let currentPage = 1;
+    let nextPageUrl = null;
+    let previousPageUrl = null;
+    let totalCount = 0;
 
-    // Cargar clientes para el select
-    fetch('/api/clients/')
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('clientSelect');
-            const clients = data.results || data;
-            clients.forEach(client => {
-                const option = document.createElement('option');
-                option.value = client.id;
-                option.textContent = client.name;
-                select.appendChild(option);
+    // Cargar TODOS los clientes (sin límite de paginación)
+    function loadAllClients() {
+        fetch('/api/clients/?page_size=10000')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('clientSelect');
+                const clients = data.results || data;
+                
+                // Limpiar y agregar placeholder
+                select.innerHTML = '<option value="">Escribe para buscar un cliente...</option>';
+                
+                // Agregar todos los clientes solo con el nombre
+                clients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.name;
+                    select.appendChild(option);
+                });
+                
+                // Inicializar Select2 con búsqueda libre
+                $('#clientSelect').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Escribe para buscar un cliente...',
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#addActivityModal'),
+                    tags: false,
+                    minimumInputLength: 0,
+                    language: {
+                        noResults: function() {
+                            return "No se encontraron clientes con ese nombre";
+                        },
+                        searching: function() {
+                            return "Buscando...";
+                        }
+                    }
+                });
+                
+                console.log(`✅ ${clients.length} clientes cargados con búsqueda`);
+            })
+            .catch(error => {
+                console.error('Error al cargar clientes:', error);
+                alert('Error al cargar la lista de clientes');
             });
-        });
+    }
 
     // Cargar estadísticas
     fetch('/api/activities/statistics/')
@@ -227,6 +272,12 @@
         const form = document.getElementById('addActivityForm');
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+        
+        // Validar que se haya seleccionado un cliente
+        if (!data.client) {
+            alert('⚠️ Por favor seleccione un cliente');
+            return;
+        }
 
         fetch('/api/activities/', {
             method: 'POST',
@@ -236,18 +287,33 @@
             },
             body: JSON.stringify(data)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.id) {
-                alert('Actividad creada exitosamente');
-                location.reload();
-            } else {
-                alert('Error al crear actividad: ' + JSON.stringify(data));
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(JSON.stringify(err));
+                });
             }
+            return response.json();
+        })
+        .then(data => {
+            alert('✅ Actividad creada exitosamente');
+            
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addActivityModal'));
+            modal.hide();
+            
+            // Limpiar formulario
+            form.reset();
+            
+            // Limpiar Select2
+            $('#clientSelect').val(null).trigger('change');
+            
+            // Recargar actividades sin recargar la página
+            loadActivities();
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al crear actividad');
+            alert('❌ Error al crear actividad: ' + error.message);
         });
     }
 
@@ -280,7 +346,35 @@
 
     function searchActivities() {
         const search = document.getElementById('searchInput').value;
-        if (search.length > 2 || search.length === 0) {
+        // Buscar después de 2 caracteres o si está vacío
+        if (search.length >= 2 || search.length === 0) {
+            currentPage = 1; // Resetear a página 1 al buscar
+            loadActivities();
+        }
+    }
+    
+    function changePageSize() {
+        currentPage = 1; // Resetear a página 1 al cambiar tamaño
+        const pageSize = document.getElementById('pageSize').value;
+        console.log(`📊 Cambiando tamaño de página a: ${pageSize}`);
+        loadActivities();
+    }
+    
+    function goToPage(page) {
+        currentPage = page;
+        loadActivities();
+    }
+    
+    function goToNextPage() {
+        if (nextPageUrl) {
+            currentPage++;
+            loadActivities();
+        }
+    }
+    
+    function goToPreviousPage() {
+        if (previousPageUrl && currentPage > 1) {
+            currentPage--;
             loadActivities();
         }
     }
@@ -289,28 +383,46 @@
         const type = document.getElementById('filterType').value;
         const status = document.getElementById('filterStatus').value;
         const search = document.getElementById('searchInput').value;
+        const pageSize = document.getElementById('pageSize').value;
         
-        let url = '/api/activities/?';
-        const params = [];
+        console.log(`🔍 loadActivities() - page_size=${pageSize}, page=${currentPage}, totalCount=${totalCount}`);
         
-        if (type) params.push(`type=${type}`);
-        if (status) params.push(`status=${status}`);
-        if (search) params.push(`search=${search}`);
+        const tbody = document.getElementById('activitiesTableBody');
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2">Cargando actividades...</p></td></tr>';
         
-        url += params.join('&');
+        // Construir URL con paginación
+        let url = `/api/activities/?page_size=${pageSize}&page=${currentPage}`;
+        
+        console.log(`📡 URL de API: ${url}`);
+        
+        if (type) url += `&type=${type}`;
+        if (status) url += `&status=${status}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
         
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const tbody = document.getElementById('activitiesTableBody');
+                console.log(`✅ Respuesta API: count=${data.count}, results.length=${data.results ? data.results.length : 0}`);
+                
                 tbody.innerHTML = '';
+                
+                // Guardar información de paginación
+                nextPageUrl = data.next;
+                previousPageUrl = data.previous;
+                totalCount = data.count || 0;
                 
                 const activities = data.results || data;
                 
+                // Actualizar contador
+                document.getElementById('totalActivities').textContent = `Total: ${totalCount} actividades`;
+                
                 if (activities.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay actividades que coincidan con los filtros</td></tr>';
+                    updatePagination(0, pageSize);
                     return;
                 }
+                
+                console.log(`📊 Mostrando ${activities.length} actividades de ${totalCount} totales`);
                 
                 activities.forEach(activity => {
                     const row = document.createElement('tr');
@@ -360,15 +472,92 @@
                     `;
                     tbody.appendChild(row);
                 });
+                
+                // Actualizar controles de paginación
+                updatePagination(totalCount, pageSize);
+                
+                // Mostrar cuántas actividades se cargaron
+                console.log(`✅ ${activities.length} actividades cargadas (Página ${currentPage})`);
             })
             .catch(error => {
                 console.error('Error al cargar actividades:', error);
+                const tbody = document.getElementById('activitiesTableBody');
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error al cargar actividades. Por favor, intente nuevamente.</td></tr>';
             });
+    }
+    
+    function updatePagination(total, pageSize) {
+        const paginationControls = document.getElementById('paginationControls');
+        const totalPages = Math.ceil(total / pageSize);
+        
+        if (totalPages <= 1) {
+            paginationControls.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Botón Anterior
+        paginationHTML += `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="goToPreviousPage(); return false;">Anterior</a>
+            </li>
+        `;
+        
+        // Páginas numeradas (mostrar máximo 5 páginas alrededor de la actual)
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+            paginationHTML += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(1); return false;">1</a></li>`;
+            if (startPage > 2) {
+                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="goToPage(${i}); return false;">${i}</a>
+                </li>
+            `;
+        }
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+            paginationHTML += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${totalPages}); return false;">${totalPages}</a></li>`;
+        }
+        
+        // Botón Siguiente
+        paginationHTML += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="goToNextPage(); return false;">Siguiente</a>
+            </li>
+        `;
+        
+        paginationControls.innerHTML = paginationHTML;
     }
 
     // Cargar actividades al inicio
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Inicializando página de actividades...');
+        
+        // Cargar actividades
         loadActivities();
+        
+        // Cargar todos los clientes para el selector
+        loadAllClients();
+        
+        // Limpiar Select2 al cerrar el modal
+        document.getElementById('addActivityModal').addEventListener('hidden.bs.modal', function () {
+            $('#clientSelect').val(null).trigger('change');
+            document.getElementById('addActivityForm').reset();
+        });
     });
 </script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {% endblock %}

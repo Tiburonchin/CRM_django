@@ -18,17 +18,17 @@ Write-Host ""
 
 # 2. Crear entorno virtual
 Write-Host "[2/7] Creando entorno virtual..." -ForegroundColor Yellow
-if (Test-Path "venv") {
+if (Test-Path ".venv") {
     Write-Host "El entorno virtual ya existe. Saltando..." -ForegroundColor Yellow
 } else {
-    python -m venv venv
+    python -m venv .venv
     Write-Host "Entorno virtual creado" -ForegroundColor Green
 }
 Write-Host ""
 
 # 3. Activar entorno virtual
 Write-Host "[3/7] Activando entorno virtual..." -ForegroundColor Yellow
-& .\venv\Scripts\Activate.ps1
+& .\.venv\Scripts\Activate.ps1
 Write-Host "Entorno virtual activado" -ForegroundColor Green
 Write-Host ""
 

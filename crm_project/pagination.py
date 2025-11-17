@@ -1,0 +1,15 @@
+"""
+Clase de paginación personalizada para el API REST
+Permite configurar el tamaño de página dinámicamente
+"""
+from rest_framework.pagination import PageNumberPagination
+
+
+class CustomPageNumberPagination(PageNumberPagination):
+    """
+    Paginación personalizada que permite al cliente especificar el tamaño de página
+    mediante el parámetro 'page_size' en la URL
+    """
+    page_size = 10  # Tamaño por defecto
+    page_size_query_param = 'page_size'  # Parámetro para cambiar el tamaño
+    max_page_size = 10000  # Máximo permitido (para evitar abusos)

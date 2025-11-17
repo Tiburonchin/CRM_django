@@ -8,7 +8,7 @@ Write-Host ""
 
 # Activar entorno virtual
 Write-Host "Activando entorno virtual..." -ForegroundColor Yellow
-& .\venv\Scripts\Activate.ps1
+& .\.venv\Scripts\Activate.ps1
 
 Write-Host ""
 Write-Host "Servidor iniciando en:" -ForegroundColor Green

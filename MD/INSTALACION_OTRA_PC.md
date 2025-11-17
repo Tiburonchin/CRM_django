@@ -95,6 +95,42 @@ pip install django-filter==25.2
 
 ### Paso 5: Configurar Base de Datos
 
+Tienes **dos opciones** para configurar la base de datos:
+
+#### **Opción A: Copiar Base de Datos Existente (Recomendado)**
+
+Si tienes el archivo `db.sqlite3` de la PC original:
+
+1. **Copia el archivo `db.sqlite3`** desde la PC original a la raíz del proyecto en la nueva PC
+2. **Aplica las migraciones** para asegurar que el esquema esté actualizado:
+   ```powershell
+   python manage.py migrate
+   ```
+3. ✅ ¡Listo! Ya tienes todos los usuarios, clientes y actividades
+
+#### **Opción B: Importar/Exportar Datos**
+
+Si prefieres exportar e importar datos:
+
+**En la PC original (Exportar datos):**
+```powershell
+# Exportar todos los datos a JSON
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude sessions > backup_data.json
+```
+
+**En la nueva PC (Importar datos):**
+```powershell
+# 1. Crear las tablas primero
+python manage.py migrate
+
+# 2. Importar los datos
+python manage.py loaddata backup_data.json
+```
+
+#### **Opción C: Crear Base de Datos Nueva**
+
+Si quieres empezar desde cero:
+
 ```powershell
 # Aplicar migraciones (crear tablas en la base de datos)
 python manage.py migrate
