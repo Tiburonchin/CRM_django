@@ -221,7 +221,7 @@ def main():
         print(f"   - Admin: http://localhost:8000/admin/")
         print(f"   - Clientes: http://localhost:8000/clients/")
         print(f"   - Actividades: http://localhost:8000/activities/")
-        print(f"   - API: http://localhost:8000/api/")
+        print(f"   - API: http://localhost:8000/api/v1/")
         print("=" * 70)
         
     except Exception as e:

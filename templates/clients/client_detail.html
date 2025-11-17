@@ -148,7 +148,7 @@
     const csrftoken = getCookie('csrftoken');
 
     // Cargar actividades del cliente
-    fetch(`/api/activities/?client=${clientId}`)
+    fetch(`/api/v1/activities/?client=${clientId}`)
         .then(response => response.json())
         .then(data => {
             const activitiesList = document.getElementById('activitiesList');
@@ -186,7 +186,7 @@
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        fetch(`/api/clients/${clientId}/`, {
+        fetch(`/api/v1/clients/${clientId}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -211,7 +211,7 @@
 
     function deleteClient() {
         if (confirm('¿Está seguro de eliminar este cliente? Se eliminarán también todas sus actividades.')) {
-            fetch(`/api/clients/${clientId}/`, {
+            fetch(`/api/v1/clients/${clientId}/`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRFToken': csrftoken

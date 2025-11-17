@@ -17,7 +17,7 @@ Write-Host ""
 Write-Host "Accesos disponibles:" -ForegroundColor Yellow
 Write-Host "  - Pagina Principal:  http://localhost:8000/" -ForegroundColor White
 Write-Host "  - Panel Admin:       http://localhost:8000/admin/" -ForegroundColor White
-Write-Host "  - API REST:          http://localhost:8000/api/" -ForegroundColor White
+Write-Host "  - API REST:          http://localhost:8000/api/v1/" -ForegroundColor White
 Write-Host "  - Clientes:          http://localhost:8000/clients/" -ForegroundColor White
 Write-Host "  - Actividades:       http://localhost:8000/activities/" -ForegroundColor White
 Write-Host ""

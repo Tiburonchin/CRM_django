@@ -29,6 +29,8 @@ class Activity(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='activities_created', verbose_name='Creado por')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Fecha de actualización')
+    # Indica si ya se envió notificación a Slack para evitar duplicados
+    slack_notified = models.BooleanField(default=False, verbose_name='Notificado en Slack')
 
     class Meta:
         verbose_name = 'Actividad'

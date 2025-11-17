@@ -6,6 +6,8 @@ from rest_framework import status
 from clients.models import Client
 from .models import Activity
 from .serializers import ActivitySerializer
+from unittest.mock import patch
+from django.test import override_settings
 
 
 class ActivityModelTestCase(TestCase):
@@ -97,3 +99,26 @@ class ActivityAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('total', response.data)
         self.assertIn('by_status', response.data)
+
+    @override_settings(SLACK_WEBHOOK_URL='https://hooks.slack.com/services/T000/B000/TEST')
+    @patch('activities.views.requests.post')
+    def test_create_meeting_triggers_slack_notification(self, mock_requests_post):
+        """Al crear una actividad de tipo meeting debe llamar a requests.post para notificar a Slack"""
+        payload = {
+            'client': self.client_obj.id,
+            'type': 'meeting',
+            'status': 'pending',
+            'date': timezone.now().isoformat(),
+            'notes': 'Meeting to discuss project',
+        }
+
+        response = self.client.post('/api/activities/', data=payload, format='json')
+        # Asegurarse de que la actividad se creó
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verificar que requests.post fue llamado para notificar a Slack
+        self.assertTrue(mock_requests_post.called, 'requests.post no fue llamado')
+        # Verificar que el payload JSON enviado a Slack contiene el texto
+        called_args, called_kwargs = mock_requests_post.call_args
+        self.assertIn('json', called_kwargs)
+        self.assertIn('text', called_kwargs['json'])

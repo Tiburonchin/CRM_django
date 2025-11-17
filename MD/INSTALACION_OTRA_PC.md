@@ -167,9 +167,9 @@ Quit the server with CTRL-BREAK.
 ### Paso 8: Abrir en el Navegador
 
 Abre tu navegador favorito y visita:
-- **Página principal**: http://localhost:8000/
-- **Panel admin**: http://localhost:8000/admin/
-- **API REST**: http://localhost:8000/api/
+-- **Página principal**: http://localhost:8000/
+-- **Panel admin**: http://localhost:8000/admin/
+-- **API REST**: http://localhost:8000/api/v1/
 
 ## Método 2: Usando el Script de Instalación Automático
 
@@ -180,7 +180,7 @@ Si existe el archivo `install.ps1`:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # Ejecutar script de instalación
-.\install.ps1
+pip show python-decouple
 ```
 
 Luego para ejecutar el servidor:
@@ -194,7 +194,7 @@ Luego para ejecutar el servidor:
 Abre http://localhost:8000/ en tu navegador
 
 ### 2. Verificar la API
-Abre http://localhost:8000/api/ y deberías ver la interfaz de Django REST Framework
+Abre http://localhost:8000/api/v1/ y deberías ver la interfaz de la API versionada (Swagger/DRF)
 
 ### 3. Verificar el admin
 Abre http://localhost:8000/admin/ e inicia sesión con tu superusuario
@@ -436,7 +436,7 @@ Usa esta lista para verificar que todo está instalado:
 - [ ] Servidor ejecutándose (`python manage.py runserver`)
 - [ ] Página web accesible (http://localhost:8000/)
 - [ ] Panel admin accesible (http://localhost:8000/admin/)
-- [ ] API accesible (http://localhost:8000/api/)
+- [ ] API accesible (http://localhost:8000/api/v1/)
 
 ---
 

@@ -48,7 +48,7 @@
                             <i class="bi bi-code-square fs-1 text-info"></i>
                             <h5 class="card-title mt-3">API REST</h5>
                             <p class="card-text">Documentación de la API</p>
-                            <a href="/api/" class="btn btn-info" target="_blank">
+                            <a href="/api/v1/" class="btn btn-info" target="_blank">
                                 Explorar API <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
@@ -106,7 +106,7 @@
 {% if user.is_authenticated %}
 <script>
     // HU 33: Consumir estadísticas desde la API
-    fetch('/api/activities/statistics/')
+    fetch('/api/v1/activities/statistics/')
         .then(response => response.json())
         .then(data => {
             document.getElementById('total-activities').textContent = data.total;
@@ -115,7 +115,7 @@
         })
         .catch(error => console.error('Error:', error));
 
-    fetch('/api/clients/')
+    fetch('/api/v1/clients/')
         .then(response => response.json())
         .then(data => {
             document.getElementById('total-clients').textContent = data.count || data.length;

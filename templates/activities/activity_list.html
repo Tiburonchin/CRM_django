@@ -180,7 +180,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="saveActivity()">Guardar</button>
+                <button id="saveActivityBtn" type="button" class="btn btn-success" onclick="saveActivity()">Guardar</button>
             </div>
         </div>
     </div>
@@ -211,10 +211,12 @@
     let nextPageUrl = null;
     let previousPageUrl = null;
     let totalCount = 0;
+    // Prevent double submit
+    let saveInProgress = false;
 
     // Cargar TODOS los clientes (sin límite de paginación)
     function loadAllClients() {
-        fetch('/api/clients/?page_size=10000')
+        fetch('/api/v1/clients/?page_size=10000')
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('clientSelect');
@@ -259,7 +261,7 @@
     }
 
     // Cargar estadísticas
-    fetch('/api/activities/statistics/')
+    fetch('/api/v1/activities/statistics/')
         .then(response => response.json())
         .then(data => {
             document.getElementById('stat-total').textContent = data.total;
@@ -269,6 +271,11 @@
         });
 
     function saveActivity() {
+        // prevent double submissions
+        if (saveInProgress) return;
+        saveInProgress = true;
+        const saveBtn = document.getElementById('saveActivityBtn');
+        if (saveBtn) saveBtn.disabled = true;
         const form = document.getElementById('addActivityForm');
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
@@ -279,7 +286,7 @@
             return;
         }
 
-        fetch('/api/activities/', {
+        fetch('/api/v1/activities/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -297,23 +304,29 @@
         })
         .then(data => {
             alert('✅ Actividad creada exitosamente');
-            
+
             // Cerrar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addActivityModal'));
             modal.hide();
-            
+
             // Limpiar formulario
             form.reset();
-            
+
             // Limpiar Select2
             $('#clientSelect').val(null).trigger('change');
-            
+
             // Recargar actividades sin recargar la página
             loadActivities();
         })
         .catch(error => {
             console.error('Error:', error);
             alert('❌ Error al crear actividad: ' + error.message);
+        })
+        .finally(() => {
+            // Re-enable save button
+            saveInProgress = false;
+            const saveBtn = document.getElementById('saveActivityBtn');
+            if (saveBtn) saveBtn.disabled = false;
         });
     }
 
@@ -323,7 +336,7 @@
 
     function deleteActivity(id) {
         if (confirm('¿Está seguro de eliminar esta actividad?')) {
-            fetch(`/api/activities/${id}/`, {
+            fetch(`/api/v1/activities/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRFToken': csrftoken
@@ -391,7 +404,7 @@
         tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2">Cargando actividades...</p></td></tr>';
         
         // Construir URL con paginación
-        let url = `/api/activities/?page_size=${pageSize}&page=${currentPage}`;
+        let url = `/api/v1/activities/?page_size=${pageSize}&page=${currentPage}`;
         
         console.log(`📡 URL de API: ${url}`);
         

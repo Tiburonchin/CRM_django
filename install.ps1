@@ -66,5 +66,5 @@ Write-Host ""
 Write-Host "URLs disponibles:" -ForegroundColor Yellow
 Write-Host "  - Aplicacion Web: http://localhost:8000/" -ForegroundColor White
 Write-Host "  - Panel Admin:    http://localhost:8000/admin/" -ForegroundColor White
-Write-Host "  - API REST:       http://localhost:8000/api/" -ForegroundColor White
+Write-Host "  - API REST:       http://localhost:8000/api/v1/" -ForegroundColor White
 Write-Host ""

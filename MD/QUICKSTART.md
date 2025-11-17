@@ -42,7 +42,7 @@ python manage.py runserver
 
 - **Home**: http://localhost:8000/
 - **Admin**: http://localhost:8000/admin/
-- **API**: http://localhost:8000/api/
+- **API**: http://localhost:8000/api/v1/
 - **Clientes**: http://localhost:8000/clients/
 - **Actividades**: http://localhost:8000/activities/
 
@@ -57,13 +57,13 @@ python manage.py runserver
 
 3. **Crear algunos clientes**:
    - Vía web: http://localhost:8000/clients/
-   - Vía API: POST a http://localhost:8000/api/clients/
+  - Vía API: POST a http://localhost:8000/api/v1/clients/
 
 4. **Crear actividades** asociadas a clientes:
    - Vía web: http://localhost:8000/activities/
-   - Vía API: POST a http://localhost:8000/api/activities/
+  - Vía API: POST a http://localhost:8000/api/v1/activities/
 
-5. **Ver estadísticas**: http://localhost:8000/api/activities/statistics/
+5. **Ver estadísticas**: http://localhost:8000/api/v1/activities/statistics/
 
 ## Ejemplos de API
 
@@ -72,7 +72,7 @@ Primero debes iniciar sesión en la web para obtener la sesión.
 
 ### Crear Cliente
 ```bash
-curl -X POST http://localhost:8000/api/clients/ \
+curl -X POST http://localhost:8000/api/v1/clients/ \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -85,12 +85,12 @@ curl -X POST http://localhost:8000/api/clients/ \
 
 ### Listar Clientes
 ```bash
-curl http://localhost:8000/api/clients/ -b cookies.txt
+curl http://localhost:8000/api/v1/clients/ -b cookies.txt
 ```
 
 ### Crear Actividad
 ```bash
-curl -X POST http://localhost:8000/api/activities/ \
+curl -X POST http://localhost:8000/api/v1/activities/ \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -104,7 +104,7 @@ curl -X POST http://localhost:8000/api/activities/ \
 
 ### Obtener Estadísticas
 ```bash
-curl http://localhost:8000/api/activities/statistics/ -b cookies.txt
+curl http://localhost:8000/api/v1/activities/statistics/ -b cookies.txt
 ```
 
 ## Tests
@@ -198,7 +198,7 @@ Solo el creador puede editar/eliminar sus actividades (HU 30).
 ## Recursos
 
 - **README.md**: Documentación completa
-- **API Docs**: http://localhost:8000/api/ (cuando el servidor esté corriendo)
+- **API Docs**: http://localhost:8000/api/v1/ (cuando el servidor esté corriendo)
 - **Django Admin**: http://localhost:8000/admin/
 
 ---

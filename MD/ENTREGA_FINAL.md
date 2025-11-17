@@ -64,7 +64,7 @@ python manage.py runserver
 ### 3. Acceder a la Aplicación
 - **Web**: http://localhost:8000/
 - **Admin**: http://localhost:8000/admin/
-- **API**: http://localhost:8000/api/
+- **API**: http://localhost:8000/api/v1/
 
 ---
 
@@ -196,8 +196,8 @@ OK ✅
 - ✅ Búsqueda en notas
 - ✅ Permisos: solo el creador puede modificar/eliminar
 
-### 4. Reportes y Estadísticas
-- ✅ Endpoint de estadísticas (`/api/activities/statistics/`)
+-### 4. Reportes y Estadísticas
+- ✅ Endpoint de estadísticas (`/api/v1/activities/statistics/`)
 - ✅ Total de actividades
 - ✅ Desglose por estado (pendientes, completadas, canceladas)
 - ✅ Desglose por tipo

@@ -2,7 +2,7 @@
 # Documentación de Endpoints de la API
 
 ## URL Base
-http://localhost:8000/api/
+http://localhost:8000/api/v1/
 
 ## Autenticación
 Autenticación basada en sesión (Django)
@@ -10,14 +10,14 @@ Autenticación basada en sesión (Django)
 ## Endpoints
 
 ### 1. API Root
-**GET** `/api/`
+**GET** `/api/v1/`
 
 Devuelve información general de la API y los endpoints disponibles.
 
 ### 2. Clients
 
 #### Listar Clientes
-**GET** `/api/clients/`
+**GET** `/api/v1/clients/`
 
 Parámetros de consulta:
 - `search`: Buscar en name, email, phone, company
@@ -25,7 +25,7 @@ Parámetros de consulta:
 - `page`: Número de página
 
 #### Crear Cliente
-**POST** `/api/clients/`
+**POST** `/api/v1/clients/`
 
 Cuerpo:
 ```json
@@ -39,19 +39,19 @@ Cuerpo:
 ```
 
 #### Obtener Cliente
-**GET** `/api/clients/{id}/`
+**GET** `/api/v1/clients/{id}/`
 
 #### Actualizar Cliente
-**PUT** `/api/clients/{id}/`
-**PATCH** `/api/clients/{id}/`
+**PUT** `/api/v1/clients/{id}/`
+**PATCH** `/api/v1/clients/{id}/`
 
 #### Eliminar Cliente
-**DELETE** `/api/clients/{id}/`
+**DELETE** `/api/v1/clients/{id}/`
 
 ### 3. Activities
 
 #### Listar Actividades
-**GET** `/api/activities/`
+**GET** `/api/v1/activities/`
 
 Parámetros de consulta:
 - `client`: Filtrar por client ID
@@ -62,7 +62,7 @@ Parámetros de consulta:
 - `page`: Número de página
 
 #### Crear Actividad
-**POST** `/api/activities/`
+**POST** `/api/v1/activities/`
 
 Cuerpo:
 ```json
@@ -76,23 +76,23 @@ Cuerpo:
 ```
 
 #### Obtener Actividad
-**GET** `/api/activities/{id}/`
+**GET** `/api/v1/activities/{id}/`
 
 #### Actualizar Actividad
-**PUT** `/api/activities/{id}/`
-**PATCH** `/api/activities/{id}/`
+**PUT** `/api/v1/activities/{id}/`
+**PATCH** `/api/v1/activities/{id}/`
 
 *Nota: Solo el creador puede actualizar*
 
 #### Eliminar Actividad
-**DELETE** `/api/activities/{id}/`
+**DELETE** `/api/v1/activities/{id}/`
 
 *Nota: Solo el creador puede eliminar*
 
 ### 4. Statistics
 
 #### Obtener Estadísticas
-**GET** `/api/activities/statistics/`
+**GET** `/api/v1/activities/statistics/`
 
 Devuelve:
 ```json

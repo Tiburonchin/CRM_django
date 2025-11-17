@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-@zj-da=bj)18vqgqtf3&q5+z!mehk8yf%&5kk3noj__i+7up!j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'testserver',
+]
 
 
 # Application definition
@@ -40,6 +44,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
     # Local apps
     'users',
     'clients',
@@ -143,6 +148,19 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+    # API versioning and schema
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'ALLOWED_VERSIONS': ['v1'],
+    'DEFAULT_VERSION': 'v1',
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# drf-spectacular settings (minimal)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CRM API',
+    'DESCRIPTION': 'Documentación automática de la API',
+    'VERSION': '1.0.0',
 }
 
 # Authentication Configuration
@@ -169,7 +187,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'errors.log',
             'formatter': 'verbose',
@@ -185,3 +203,15 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+
+# URL para notificaciones de Slack (CRITERIO 4)
+# Recomendado: store this in an environment variable and load it with python-decouple
+# Example: SLACK_WEBHOOK_URL = config('SLACK_WEBHOOK_URL', default='')
+try:
+    from decouple import config
+    SLACK_WEBHOOK_URL = config('SLACK_WEBHOOK_URL', default='')
+except Exception:
+    # If python-decouple is not available or env var not set, default to empty string
+    # Do NOT hardcode secrets here. Use environment variables or .env with python-decouple.
+    SLACK_WEBHOOK_URL = ''

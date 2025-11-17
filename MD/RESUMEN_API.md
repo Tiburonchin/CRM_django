@@ -38,7 +38,7 @@ La API REST es como un "menú de restaurante" para tu sistema:
 │  (Navegador, App Móvil, Script Python, etc.)           │
 └────────────────┬────────────────────────────────────────┘
                  │ HTTP Request (GET, POST, PUT, DELETE)
-                 │ Ejemplo: GET /api/clients/
+                 │ Ejemplo: GET /api/v1/clients/
                  ↓
 ┌─────────────────────────────────────────────────────────┐
 │              SERVIDOR DJANGO (Backend)                  │
@@ -74,9 +74,9 @@ fetch('/api/activities/?status=pending')
 
 **Ejemplo 2: En el navegador directamente**
 ```
-http://localhost:8000/api/clients/          → Ver todos los clientes
-http://localhost:8000/api/activities/       → Ver todas las actividades
-http://localhost:8000/api/activities/statistics/ → Ver estadísticas
+http://localhost:8000/api/v1/clients/          → Ver todos los clientes
+http://localhost:8000/api/v1/activities/       → Ver todas las actividades
+http://localhost:8000/api/v1/activities/statistics/ → Ver estadísticas
 ```
 
 #### B) Desde Scripts Externos (Ejemplo creado)
@@ -86,7 +86,7 @@ http://localhost:8000/api/activities/statistics/ → Ver estadísticas
 import requests
 
 # Conectarse a la API
-response = requests.get('http://localhost:8000/api/clients/')
+response = requests.get('http://localhost:8000/api/v1/clients/')
 clientes = response.json()
 
 # Usar los datos
@@ -171,7 +171,7 @@ python manage.py runserver
 import requests
 import pandas as pd
 
-response = requests.get('http://localhost:8000/api/clients/')
+response = requests.get('http://localhost:8000/api/v1/clients/')
 clientes = response.json()['results']
 
 # Crear DataFrame

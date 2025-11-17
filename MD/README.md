@@ -99,7 +99,7 @@ python manage.py runserver
 8. **Acceder a la aplicación**
 - Aplicación web: http://localhost:8000/
 - Panel admin: http://localhost:8000/admin/
-- API REST: http://localhost:8000/api/
+- API REST: http://localhost:8000/api/v1/
 
 ## 📚 Documentación de la API
 
@@ -110,7 +110,7 @@ La API utiliza autenticación por sesión de Django. Para acceder a los endpoint
 
 #### 🏠 Raíz de la API
 ```
-GET /api/
+GET /api/v1/
 ```
 Retorna información general de la API y listado de endpoints disponibles.
 
@@ -120,9 +120,9 @@ Retorna información general de la API y listado de endpoints disponibles.
   "message": "Bienvenido al API del CRM",
   "version": "1.0",
   "endpoints": {
-    "clients": "/api/clients/",
-    "activities": "/api/activities/",
-    "statistics": "/api/activities/statistics/"
+    "clients": "/api/v1/clients/",
+    "activities": "/api/v1/activities/",
+    "statistics": "/api/v1/activities/statistics/"
   }
 }
 ```
@@ -133,7 +133,7 @@ Retorna información general de la API y listado de endpoints disponibles.
 
 **Listar Clientes**
 ```
-GET /api/clients/
+GET /api/v1/clients/
 ```
 Parámetros de query opcionales:
 - `search`: Buscar en nombre, email, teléfono, empresa
@@ -165,7 +165,7 @@ Parámetros de query opcionales:
 
 **Crear Cliente**
 ```
-POST /api/clients/
+POST /api/v1/clients/
 Content-Type: application/json
 
 {
@@ -179,12 +179,12 @@ Content-Type: application/json
 
 **Obtener Cliente**
 ```
-GET /api/clients/{id}/
+GET /api/v1/clients/{id}/
 ```
 
 **Actualizar Cliente**
 ```
-PUT /api/clients/{id}/
+PUT /api/v1/clients/{id}/
 Content-Type: application/json
 
 {
@@ -198,7 +198,7 @@ Content-Type: application/json
 
 **Actualización Parcial**
 ```
-PATCH /api/clients/{id}/
+PATCH /api/v1/clients/{id}/
 Content-Type: application/json
 
 {
@@ -208,7 +208,7 @@ Content-Type: application/json
 
 **Eliminar Cliente**
 ```
-DELETE /api/clients/{id}/
+DELETE /api/v1/clients/{id}/
 ```
 
 ---
@@ -217,7 +217,7 @@ DELETE /api/clients/{id}/
 
 **Listar Actividades**
 ```
-GET /api/activities/
+GET /api/v1/activities/
 ```
 Parámetros de query opcionales:
 - `client`: Filtrar por ID de cliente
@@ -254,7 +254,7 @@ Parámetros de query opcionales:
 
 **Crear Actividad**
 ```
-POST /api/activities/
+POST /api/v1/activities/
 Content-Type: application/json
 
 {
@@ -268,20 +268,20 @@ Content-Type: application/json
 
 **Obtener Actividad**
 ```
-GET /api/activities/{id}/
+GET /api/v1/activities/{id}/
 ```
 *Nota: Este endpoint retorna información detallada del cliente asociado.*
 
 **Actualizar Actividad**
 ```
-PUT /api/activities/{id}/
-PATCH /api/activities/{id}/
+PUT /api/v1/activities/{id}/
+PATCH /api/v1/activities/{id}/
 ```
 *Solo el creador de la actividad puede modificarla (HU 30).*
 
 **Eliminar Actividad**
 ```
-DELETE /api/activities/{id}/
+DELETE /api/v1/activities/{id}/
 ```
 *Solo el creador de la actividad puede eliminarla (HU 30).*
 

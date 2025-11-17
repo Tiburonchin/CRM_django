@@ -17,6 +17,23 @@ class ActivitySerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_by', 'created_at', 'updated_at')
 
+    # Aceptar múltiples formatos de entrada para la fecha/hora
+    date = serializers.DateTimeField(
+        input_formats=[
+            '%Y-%m-%dT%H:%M:%S.%f%z',
+            '%Y-%m-%dT%H:%M:%S%z',
+            '%Y-%m-%dT%H:%M:%S.%f',
+            '%Y-%m-%dT%H:%M:%S',
+            '%Y-%m-%dT%H:%M%z',
+            '%Y-%m-%dT%H:%M',
+            '%Y-%m-%d %H:%M:%S.%f%z',
+            '%Y-%m-%d %H:%M:%S%z',
+            '%Y-%m-%d %H:%M:%S.%f',
+            '%Y-%m-%d %H:%M:%S',
+            '%Y-%m-%d %H:%M',
+        ]
+    )
+
     def validate(self, data):
         """
         Validaciones personalizadas
